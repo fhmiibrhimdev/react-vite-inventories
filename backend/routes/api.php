@@ -1,10 +1,11 @@
 <?php
 
-use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\PersonalController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\OpeningBalanceItems;
+use App\Http\Controllers\Api\RackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,9 +39,10 @@ Route::group(['middleware' => ['auth:api']], function () {
 });
 
 Route::group(['middleware' => ['auth:api', 'role:admin']], function () {
-    Route::resource('/products', ProductController::class);
-    Route::post('/products/multiple-store', [ProductController::class, 'multipleStore']);
-    Route::resource('/gallery', GalleryController::class);
+    Route::resource('/category', CategoryController::class);
+    Route::resource('/rack', RackController::class);
+    Route::resource('/item', ItemController::class);
+    Route::resource('/opening-balance-items', OpeningBalanceItems::class);
 });
 
 Route::post('/logout', App\Http\Controllers\Api\LogoutController::class)->name('logout');

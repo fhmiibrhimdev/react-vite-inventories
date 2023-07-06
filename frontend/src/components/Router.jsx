@@ -10,6 +10,9 @@ import MainLayout from "../pages/Layout/MainLayout";
 import Error403 from "../pages/Error/403";
 import Error404 from "../pages/Error/404";
 import Profile from "../pages/Profile/Profile";
+import Category from "../pages/MasterData/Category";
+import Rack from "../pages/MasterData/Rack";
+import Item from "../pages/MasterData/Items";
 
 export default function Router() {
     return (
@@ -44,19 +47,28 @@ export default function Router() {
             />
             <Route
                 exact
-                path="/general-feature"
+                path="/category"
                 element={
                     <MainLayout>
-                        <GeneralFeature />
+                        <Category />
                     </MainLayout>
                 }
             />
             <Route
                 exact
-                path="/advanced-feature"
+                path="/rack-location"
                 element={
                     <MainLayout>
-                        <AdvancedFeature />
+                        <Rack />
+                    </MainLayout>
+                }
+            />
+            <Route
+                exact
+                path="/items"
+                element={
+                    <MainLayout>
+                        <Item />
                     </MainLayout>
                 }
             />

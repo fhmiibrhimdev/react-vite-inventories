@@ -12,19 +12,35 @@ export default function Navigation() {
     const navigate = useNavigate();
     const token = getTokenWithExpiration("token");
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    const dropdownRef = useRef(null);
+    const dropdownRef1 = useRef(null);
+    const dropdownRef2 = useRef(null);
+    const dropdownRef3 = useRef(null);
+    const [dropdownOpen1, setDropdownOpen1] = useState(false);
+    const [dropdownOpen2, setDropdownOpen2] = useState(false);
+    const [dropdownOpen3, setDropdownOpen3] = useState(false);
 
-    const handleDropdownClick = () => {
-        setDropdownOpen(!dropdownOpen);
+    const handleDropdownClick = (dropdown) => {
+        if (dropdown === 1) {
+            setDropdownOpen1(!dropdownOpen1);
+        } else if (dropdown === 2) {
+            setDropdownOpen2(!dropdownOpen2);
+        } else if (dropdown === 3) {
+            setDropdownOpen3(!dropdownOpen3);
+        }
     };
 
     const handleClickOutsideDropdown = (event) => {
         if (
-            dropdownRef.current &&
-            !dropdownRef.current.contains(event.target)
+            dropdownRef1.current &&
+            !dropdownRef1.current.contains(event.target) &&
+            dropdownRef2.current &&
+            !dropdownRef2.current.contains(event.target) &&
+            dropdownRef3.current &&
+            !dropdownRef3.current.contains(event.target)
         ) {
-            setDropdownOpen(false);
+            setDropdownOpen1(false);
+            setDropdownOpen2(false);
+            setDropdownOpen3(false);
         }
     };
 
@@ -63,7 +79,7 @@ export default function Navigation() {
         <>
             <nav className="navbar navbar-expand-lg main-navbar">
                 <Link to="/" className="navbar-brand sidebar-gone-hide">
-                    REACT VITE
+                    MINVENTORY
                 </Link>
                 <div className="navbar-nav">
                     <a
@@ -125,93 +141,218 @@ export default function Navigation() {
                         </li>
                         <li
                             className={`nav-item dropdown ${
-                                location.pathname === "/general-feature" ||
-                                location.pathname === "/advanced-feature" ||
-                                location.pathname === "/products" ||
-                                location.pathname === "/gallery" ||
-                                location.pathname === "/multiple-insert"
+                                location.pathname === "/category" ||
+                                location.pathname === "/rack-location" ||
+                                location.pathname === "/items"
                                     ? "active"
                                     : ""
                             }`}
-                            ref={dropdownRef}
+                            ref={dropdownRef1}
                         >
                             <a
                                 href="#"
-                                onClick={handleDropdownClick}
+                                onClick={() => handleDropdownClick(1)}
                                 className={`nav-link has-dropdown ${
-                                    dropdownOpen ? "show" : ""
+                                    dropdownOpen1 ? "show" : ""
                                 }`}
                             >
                                 <i className="fas fa-fire"></i>
-                                <span>Module 1</span>
+                                <span>Master Data</span>
                             </a>
                             <ul
                                 className={`dropdown-menu ${
-                                    dropdownOpen ? "show" : ""
+                                    dropdownOpen1 ? "show" : ""
                                 }`}
                             >
                                 <li
                                     className={`nav-item ${
-                                        location.pathname === "/general-feature"
+                                        location.pathname === "/category"
                                             ? "active"
                                             : ""
                                     }`}
                                 >
-                                    <NavLink href="/general-feature">
-                                        General Feature
+                                    <NavLink href="/category">Category</NavLink>
+                                </li>
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname === "/rack-location"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/rack-location">
+                                        Rack Location
+                                    </NavLink>
+                                </li>
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname === "/items"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/items">Items</NavLink>
+                                </li>
+                            </ul>
+                        </li>
+                        <li
+                            className={`nav-item dropdown ${
+                                location.pathname ===
+                                    "/opening-balance-items" ||
+                                location.pathname === "/stock-in" ||
+                                location.pathname === "/stock-out" ||
+                                location.pathname === "/stock-opname"
+                                    ? "active"
+                                    : ""
+                            }`}
+                            ref={dropdownRef2}
+                        >
+                            <a
+                                href="#"
+                                onClick={() => handleDropdownClick(2)}
+                                className={`nav-link has-dropdown ${
+                                    dropdownOpen2 ? "show" : ""
+                                }`}
+                            >
+                                <i className="fas fa-inventory"></i>
+                                <span>Inventory</span>
+                            </a>
+                            <ul
+                                className={`dropdown-menu ${
+                                    dropdownOpen2 ? "show" : ""
+                                }`}
+                            >
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname ===
+                                        "/opening-balance-items"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/opening-balance-items">
+                                        Opening Balance Items
+                                    </NavLink>
+                                </li>
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname === "/stock-in"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/stock-in">Stock In</NavLink>
+                                </li>
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname === "/stock-out"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/stock-out">
+                                        Stock Out
+                                    </NavLink>
+                                </li>
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname === "/stock-opname"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/stock-opname">
+                                        Stock Out
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </li>
+                        <li
+                            className={`nav-item ${
+                                location.pathname === "/stock-card"
+                                    ? "active"
+                                    : ""
+                            }`}
+                        >
+                            <NavLink href="/stock-card">
+                                <i className="far fa-pallet"></i>
+                                <span>Stock Card</span>
+                            </NavLink>
+                        </li>
+                        <li
+                            className={`nav-item dropdown ${
+                                location.pathname ===
+                                    "/report-opening-balance-items" ||
+                                location.pathname === "/report-stock-in" ||
+                                location.pathname === "/report-stock-out" ||
+                                location.pathname === "/report-stock-opname"
+                                    ? "active"
+                                    : ""
+                            }`}
+                            ref={dropdownRef3}
+                        >
+                            <a
+                                href="#"
+                                onClick={() => handleDropdownClick(3)}
+                                className={`nav-link has-dropdown ${
+                                    dropdownOpen3 ? "show" : ""
+                                }`}
+                            >
+                                <i className="far fa-file-archive"></i>
+                                <span>Report</span>
+                            </a>
+                            <ul
+                                className={`dropdown-menu ${
+                                    dropdownOpen3 ? "show" : ""
+                                }`}
+                            >
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname ===
+                                        "/report-opening-balance-items"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/report-opening-balance-items">
+                                        Opening Balance Items
+                                    </NavLink>
+                                </li>
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname === "/report-stock-in"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/report-stock-in">
+                                        Stock In
                                     </NavLink>
                                 </li>
                                 <li
                                     className={`nav-item ${
                                         location.pathname ===
-                                        "/advanced-feature"
+                                        "/report-stock-out"
                                             ? "active"
                                             : ""
                                     }`}
                                 >
-                                    <NavLink href="/advanced-feature">
-                                        Advanced Feature
+                                    <NavLink href="/report-stock-out">
+                                        Stock Out
                                     </NavLink>
                                 </li>
-                                {user.role === "admin" && (
-                                    <>
-                                        <li
-                                            className={`nav-item ${
-                                                location.pathname ===
-                                                "/products"
-                                                    ? "active"
-                                                    : ""
-                                            }`}
-                                        >
-                                            <NavLink href="/products">
-                                                Products
-                                            </NavLink>
-                                        </li>
-                                        <li
-                                            className={`nav-item ${
-                                                location.pathname === "/gallery"
-                                                    ? "active"
-                                                    : ""
-                                            }`}
-                                        >
-                                            <NavLink href="/gallery">
-                                                Gallery
-                                            </NavLink>
-                                        </li>
-                                        <li
-                                            className={`nav-item ${
-                                                location.pathname ===
-                                                "/multiple-insert"
-                                                    ? "active"
-                                                    : ""
-                                            }`}
-                                        >
-                                            <NavLink href="/multiple-insert">
-                                                Multiple Insert
-                                            </NavLink>
-                                        </li>
-                                    </>
-                                )}
+                                <li
+                                    className={`nav-item ${
+                                        location.pathname ===
+                                        "/report-stock-opname"
+                                            ? "active"
+                                            : ""
+                                    }`}
+                                >
+                                    <NavLink href="/report-stock-opname">
+                                        Stock Opname
+                                    </NavLink>
+                                </li>
                             </ul>
                         </li>
                     </ul>
