@@ -13,6 +13,7 @@ import Profile from "../pages/Profile/Profile";
 import Category from "../pages/MasterData/Category";
 import Rack from "../pages/MasterData/Rack";
 import Item from "../pages/MasterData/Items";
+import OpeningBalanceItems from "../pages/Inventory/OpeningBalanceItems";
 
 export default function Router() {
     return (
@@ -69,6 +70,15 @@ export default function Router() {
                 element={
                     <MainLayout>
                         <Item />
+                    </MainLayout>
+                }
+            />
+            <Route
+                exact
+                path="/opening-balance-items"
+                element={
+                    <MainLayout>
+                        <OpeningBalanceItems />
                     </MainLayout>
                 }
             />

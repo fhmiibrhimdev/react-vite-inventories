@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\ItemController;
-use App\Http\Controllers\Api\OpeningBalanceItems;
-use App\Http\Controllers\Api\RackController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\RackController;
+use App\Http\Controllers\PersonalController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\OpeningBalanceItems;
 
 /*
 |--------------------------------------------------------------------------
