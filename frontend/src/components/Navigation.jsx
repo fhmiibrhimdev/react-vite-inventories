@@ -262,7 +262,7 @@ export default function Navigation() {
                                     }`}
                                 >
                                     <NavLink href="/stock-opname">
-                                        Stock Out
+                                        Stock Opname
                                     </NavLink>
                                 </li>
                             </ul>

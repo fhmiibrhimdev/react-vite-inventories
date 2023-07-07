@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\RackController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OpeningBalanceItems;
+use App\Http\Controllers\Api\StockIn;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin']], function () {
     Route::resource('/rack', RackController::class);
     Route::resource('/item', ItemController::class);
     Route::resource('/opening-balance-items', OpeningBalanceItems::class);
+    Route::resource('/stock-in', StockIn::class);
 });
 
 Route::post('/logout', App\Http\Controllers\Api\LogoutController::class)->name('logout');
