@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use Exception;
-use App\Models\Item;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Models\Item;
 
-class StockIn extends Controller
+class OpeningBalanceItemsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -24,17 +24,17 @@ class StockIn extends Controller
             $items = Item::select('id', 'item_name')
                         ->get();
 
-            $data = Inventory::select('inventories.*', 'items.item_name', )
-                    ->join('items', 'items.id', 'inventories.item_id', )
+            $data = Inventory::select('inventories.*', 'items.item_name')
+                    ->join('items', 'items.id', 'inventories.item_id')
                     ->where(function ($query) use ($searchTerm)  {
                         $query->where('items.item_name', 'LIKE', $searchTerm);
-                        $query->where('inventories.date', 'LIKE', $searchTerm);
-                        $query->where('inventories.qty', 'LIKE', $searchTerm);
-                        $query->where('inventories.description', 'LIKE', $searchTerm);
+                        $query->orWhere('inventories.date', 'LIKE', $searchTerm);
+                        $query->orWhere('inventories.qty', 'LIKE', $searchTerm);
+                        $query->orWhere('inventories.description', 'LIKE', $searchTerm);
                     })
-                    ->where('inventories.status', 'In')
-                    ->where('inventories.opname', 'no')
+                    ->where('inventories.status', 'Balance')
                     ->orderBy('inventories.id', 'DESC')
+                    // ->get();
                     ->paginate($perPage);
 
             return response()->json([
@@ -98,7 +98,7 @@ class StockIn extends Controller
                     'item_id'       => $request->item_id,
                     'qty'           => $request->qty,
                     'description'   => $request->description,
-                    'status'        => 'In',
+                    'status'        => 'Balance',
                 ]);
 
                 Item::where('id', $request->item_id)
@@ -226,3 +226,5 @@ class StockIn extends Controller
     }
     
 }
+
+
