@@ -355,7 +355,7 @@ export default function Item() {
                                         </th>
                                         <th width="8%">Image</th>
                                         <th width="10%">Item Code</th>
-                                        <th width="10%">Item Name</th>
+                                        <th width="15%">Item Name</th>
                                         <th width="10%">Category</th>
                                         <th>Rack</th>
                                         <th width="8%">Stock</th>
@@ -372,14 +372,23 @@ export default function Item() {
                                                     {index + 1}
                                                 </td>
                                                 <td>
-                                                    <img
-                                                        className="tw-aspect-square tw-w-3/6 tw-rounded-lg"
-                                                        src={
+                                                    <a
+                                                        href={
                                                             appConfig.baseURL +
                                                             "/storage/images/" +
                                                             row.image
                                                         }
-                                                    />
+                                                        target="_BLANK"
+                                                    >
+                                                        <img
+                                                            className="tw-aspect-square tw-w-3/6 tw-rounded-lg"
+                                                            src={
+                                                                appConfig.baseURL +
+                                                                "/storage/images/" +
+                                                                row.image
+                                                            }
+                                                        />
+                                                    </a>
                                                 </td>
                                                 <td>{row.item_code}</td>
                                                 <td>{row.item_name}</td>
