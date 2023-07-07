@@ -68,11 +68,7 @@ class OpeningBalanceItemsController extends Controller
 
     private function alertStockMinus()
     {
-        return response()->json([
-            'data'      => [],
-            'success'   => false,
-            'message'   => 'Stock cannot be less than zero'
-        ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+        abort(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, 'Stock cannot be less than zero');
     }
 
     /**

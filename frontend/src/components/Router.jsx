@@ -15,6 +15,7 @@ import Rack from "../pages/MasterData/Rack";
 import Item from "../pages/MasterData/Items";
 import OpeningBalanceItems from "../pages/Inventory/OpeningBalanceItems";
 import StockIn from "../pages/Inventory/StockIn";
+import StockOut from "../pages/Inventory/StockOut";
 
 export default function Router() {
     return (
@@ -89,6 +90,15 @@ export default function Router() {
                 element={
                     <MainLayout>
                         <StockIn />
+                    </MainLayout>
+                }
+            />
+            <Route
+                exact
+                path="/stock-out"
+                element={
+                    <MainLayout>
+                        <StockOut />
                     </MainLayout>
                 }
             />
