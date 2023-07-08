@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\RackController;
 use App\Http\Controllers\PersonalController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OpeningBalanceItemsController;
+use App\Http\Controllers\Api\StockCardController;
 use App\Http\Controllers\Api\StockInController;
 use App\Http\Controllers\Api\StockOpnameController;
 use App\Http\Controllers\Api\StockOutController;
@@ -51,6 +52,7 @@ Route::group(['middleware' => ['auth:api', 'role:admin']], function () {
     Route::resource('/stock-out', StockOutController::class);
     Route::resource('/stock-opname', StockOpnameController::class);
     Route::get('/stock-opname/{stock_opname}/book', [StockOpnameController::class, 'checkValueBook']);
+    Route::resource('/stock-card', StockCardController::class);
 });
 
 Route::post('/logout', App\Http\Controllers\Api\LogoutController::class)->name('logout');

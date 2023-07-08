@@ -21,7 +21,7 @@ class StockOutController extends Controller
             $search     = $request->get('search', '');
             $searchTerm = '%'.$search.'%';
 
-            $items = Item::select('id', 'item_name')
+            $items = Item::select('id as value', 'item_name as label')
                         ->get();
 
             $data = Inventory::select('inventories.*', 'items.item_name')
@@ -66,7 +66,6 @@ class StockOutController extends Controller
             $data = Inventory::findOrFail($id);
             $data->update([
                 'date'          => date('Y-m-d H:i', strtotime($date)),
-                'item_id'       => $item_id,
                 'qty'           => $new_qty,
                 'description'   => $description,
             ]);
@@ -166,14 +165,8 @@ class StockOutController extends Controller
             $last_qty   = Inventory::where('id', $id)->first()->qty;
             $new_qty    = $request->qty;
 
-            switch (true) {
-                case ((int)$new_qty > (int)$last_qty):
-                case ((int)$last_qty > (int)$new_qty):
-                    $this->logicStock($total_stock_now, $new_qty, $last_qty, $item_id, $request->date, $id, $request->description);
-                    break;
-                default:
-                    break;
-            }
+            $this->logicStock($total_stock_now, $new_qty, $last_qty, $item_id, $request->date, $id, $request->description);
+
         } catch (Exception $e) {
             return response()->json([
                 'data'      => [],

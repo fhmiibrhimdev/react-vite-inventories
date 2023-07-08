@@ -21,7 +21,7 @@ class StockOpnameController extends Controller
             $search     = $request->get('search', '');
             $searchTerm = '%'.$search.'%';
 
-            $items = Item::select('id', 'item_name')
+            $items = Item::select('id as value', 'item_name as label')
                         ->get();
 
             $data = Inventory::select('inventories.*', 'items.item_name')

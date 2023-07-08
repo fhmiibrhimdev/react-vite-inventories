@@ -21,7 +21,7 @@ class OpeningBalanceItemsController extends Controller
             $search     = $request->get('search', '');
             $searchTerm = '%'.$search.'%';
 
-            $items = Item::select('id', 'item_name')
+            $items = Item::select('id as value', 'item_name as label')
                         ->get();
 
             $data = Inventory::select('inventories.*', 'items.item_name')
@@ -169,7 +169,6 @@ class OpeningBalanceItemsController extends Controller
             $data = Inventory::findOrFail($id);
             $data->update([
                 'date'          => date('Y-m-d H:i', strtotime($request->date)),
-                'item_id'       => $request->item_id,
                 'qty'           => $request->qty,
                 'description'   => $request->description,
             ]);

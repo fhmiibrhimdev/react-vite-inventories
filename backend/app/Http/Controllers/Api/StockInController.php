@@ -21,7 +21,7 @@ class StockInController extends Controller
             $search     = $request->get('search', '');
             $searchTerm = '%'.$search.'%';
 
-            $items = Item::select('id', 'item_name')
+            $items = Item::select('id as value', 'item_name as label')
                         ->get();
 
             $data = Inventory::select('inventories.*', 'items.item_name', )
@@ -51,7 +51,7 @@ class StockInController extends Controller
         }
     }
 
-    private function logicStock($total_stock_now, $new_qty, $last_qty, $item_id)
+    private function logicStock($total_stock_now, $new_qty, $last_qty, $item_id, $date, $id, $description)
     {
         $total          = $new_qty - $last_qty;
         $total_stock    = $total_stock_now + $total;
@@ -63,6 +63,18 @@ class StockInController extends Controller
                 ->update(array(
                     'stock' => $total_stock
                 ));
+
+            $data = Inventory::findOrFail($id);
+            $data->update([
+                'date'          => date('Y-m-d H:i', strtotime($date)),
+                'qty'           => $new_qty,
+                'description'   => $description,
+            ]);
+
+            return response()->json([
+                'success'   => true,
+                'message'   => 'Data updated successfully'
+            ], JsonResponse::HTTP_OK);
         }
     }
 
@@ -157,27 +169,8 @@ class StockInController extends Controller
             $last_qty   = Inventory::where('id', $id)->first()->qty;
             $new_qty    = $request->qty;
 
-            switch (true) {
-                case ((int)$new_qty > (int)$last_qty):
-                case ((int)$last_qty > (int)$new_qty):
-                    $this->logicStock($total_stock_now, $new_qty, $last_qty, $item_id);
-                    break;
-                default:
-                    break;
-            }
+            $this->logicStock($total_stock_now, $new_qty, $last_qty, $item_id, $request->date, $id, $request->description);
 
-            $data = Inventory::findOrFail($id);
-            $data->update([
-                'date'          => date('Y-m-d H:i', strtotime($request->date)),
-                'item_id'       => $request->item_id,
-                'qty'           => $request->qty,
-                'description'   => $request->description,
-            ]);
-
-            return response()->json([
-                'success'   => true,
-                'message'   => 'Data updated successfully'
-            ], JsonResponse::HTTP_OK);
         } catch (Exception $e) {
             return response()->json([
                 'data'      => [],

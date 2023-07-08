@@ -1,5 +1,6 @@
 import axios from "axios";
 import Swal from "sweetalert2";
+import Select from "react-select";
 import { debounce } from "lodash";
 import Case from "../../components/Case";
 import { useNavigate } from "react-router-dom";
@@ -70,14 +71,14 @@ export default function StockIn() {
         date: formattedDate,
         item_id: "",
         qty: "1",
-        description: "-",
+        description: "[In] ",
     });
 
     const initialFormData = {
         date: formattedDate,
         item_id: "",
         qty: "1",
-        description: "-",
+        description: "[In] ",
     };
 
     const [formErrors, setFormErrors] = useState({
@@ -171,6 +172,13 @@ export default function StockIn() {
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setFormData({ ...formData, [name]: value });
+    };
+
+    const handleSelectedChange = (value) => {
+        setFormData({
+            ...formData,
+            item_id: value.value,
+        });
     };
 
     const handleSubmit = (event) => {
@@ -420,30 +428,16 @@ export default function StockIn() {
                                 />
                                 <div className="form-group">
                                     <label htmlFor="item_id">Item name</label>
-                                    <select
-                                        name="item_id"
+                                    <Select
                                         id="item_id"
-                                        className={`form-control ${
-                                            formErrors.item_id
-                                                ? "is-invalid"
-                                                : ""
-                                        }`}
-                                        value={formData.item_id || ""}
-                                        onChange={handleInputChange}
-                                    >
-                                        <option value="" disabled>
-                                            -- Select Option --
-                                        </option>
-                                        {items.map((item, index) => (
-                                            <option key={index} value={item.id}>
-                                                {item.item_name}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        name="item_id"
+                                        options={items}
+                                        onChange={handleSelectedChange}
+                                    />
                                     {formErrors.item_id && (
-                                        <div className="invalid-feedback">
+                                        <span className="tw-text-xs tw-text-red-500">
                                             {formErrors.item_id}
-                                        </div>
+                                        </span>
                                     )}
                                 </div>
                                 <InputValidation
