@@ -58,25 +58,29 @@ export default function StockIn() {
     const [modalData, setModalData] = useState(null);
     const [isEditing, setIsEditing] = useState(null);
 
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 7);
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+
     /**
      * Initial form, reset input fields, and validate the form
      */
 
     const [formData, setFormData] = useState({
-        date: "",
+        date: formattedDate,
         item_id: "",
         qty: "1",
         description: "-",
     });
 
     const initialFormData = {
+        date: formattedDate,
         item_id: "",
         qty: "1",
         description: "-",
     };
 
     const [formErrors, setFormErrors] = useState({
-        date: "",
         item_id: "",
         qty: "",
         description: "",
@@ -271,7 +275,6 @@ export default function StockIn() {
         axios
             .delete(`${appConfig.baseurlAPI}/stock-in/${id}`)
             .then((data) => {
-                console.log("Success:", data);
                 setRows(rows.filter((row) => row.id !== id));
                 setTotalRows(totalRows - 1);
                 MySwal.fire({

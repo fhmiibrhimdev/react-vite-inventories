@@ -16,6 +16,7 @@ import Item from "../pages/MasterData/Items";
 import OpeningBalanceItems from "../pages/Inventory/OpeningBalanceItems";
 import StockIn from "../pages/Inventory/StockIn";
 import StockOut from "../pages/Inventory/StockOut";
+import StockOpname from "../pages/Inventory/StockOpname";
 
 export default function Router() {
     return (
@@ -99,6 +100,15 @@ export default function Router() {
                 element={
                     <MainLayout>
                         <StockOut />
+                    </MainLayout>
+                }
+            />
+            <Route
+                exact
+                path="/stock-opname"
+                element={
+                    <MainLayout>
+                        <StockOpname />
                     </MainLayout>
                 }
             />

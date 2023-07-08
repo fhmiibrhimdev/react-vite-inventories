@@ -7,7 +7,7 @@ export default function Footer() {
                 Copyright &copy; 2023 <div className="bullet"></div> Created By
                 <a href="https://github.com/fhmiibrhimdev"> Fahmi Ibrahim</a>
             </div>
-            <div className="footer-right">0.3.3</div>
+            <div className="footer-right">0.4.0</div>
         </footer>
     );
 }

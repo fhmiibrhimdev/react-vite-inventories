@@ -58,25 +58,29 @@ export default function StockOut() {
     const [modalData, setModalData] = useState(null);
     const [isEditing, setIsEditing] = useState(null);
 
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 7);
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+
     /**
      * Initial form, reset input fields, and validate the form
      */
 
     const [formData, setFormData] = useState({
-        date: "",
+        date: formattedDate,
         item_id: "",
         qty: "1",
         description: "-",
     });
 
     const initialFormData = {
+        date: formattedDate,
         item_id: "",
         qty: "1",
         description: "-",
     };
 
     const [formErrors, setFormErrors] = useState({
-        date: "",
         item_id: "",
         qty: "",
         description: "",
@@ -197,12 +201,11 @@ export default function StockOut() {
                         }
                     })
                     .catch((error) => {
-                        console.error("Error:", error);
                         MySwal.fire({
                             title: "Oops...",
-                            html: "Something went wrong.",
+                            html: error.response.data.message,
                             icon: "error",
-                            timer: 2000,
+                            timer: 5000,
                         });
                     });
             }
@@ -219,7 +222,6 @@ export default function StockOut() {
                         }
                     )
                     .then((response) => {
-                        console.log(response);
                         if (response.status === 200) {
                             Swal.fire({
                                 title: "Success!",
@@ -271,7 +273,6 @@ export default function StockOut() {
         axios
             .delete(`${appConfig.baseurlAPI}/stock-out/${id}`)
             .then((data) => {
-                console.log("Success:", data);
                 setRows(rows.filter((row) => row.id !== id));
                 setTotalRows(totalRows - 1);
                 MySwal.fire({
@@ -282,7 +283,6 @@ export default function StockOut() {
                 });
             })
             .catch((error) => {
-                console.error("Error:", error);
                 MySwal.fire({
                     title: "Oops...",
                     html: "Something went wrong.",

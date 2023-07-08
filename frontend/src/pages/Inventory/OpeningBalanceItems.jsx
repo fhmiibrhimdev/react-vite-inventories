@@ -58,25 +58,29 @@ export default function OpeningBalanceItems() {
     const [modalData, setModalData] = useState(null);
     const [isEditing, setIsEditing] = useState(null);
 
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 7);
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+
     /**
      * Initial form, reset input fields, and validate the form
      */
 
     const [formData, setFormData] = useState({
-        date: "",
+        date: formattedDate,
         item_id: "",
         qty: "1",
         description: "-",
     });
 
     const initialFormData = {
+        date: formattedDate,
         item_id: "",
         qty: "1",
         description: "-",
     };
 
     const [formErrors, setFormErrors] = useState({
-        date: "",
         item_id: "",
         qty: "",
         description: "",
@@ -275,7 +279,6 @@ export default function OpeningBalanceItems() {
         axios
             .delete(`${appConfig.baseurlAPI}/opening-balance-items/${id}`)
             .then((data) => {
-                console.log("Success:", data);
                 setRows(rows.filter((row) => row.id !== id));
                 setTotalRows(totalRows - 1);
                 MySwal.fire({
@@ -326,14 +329,14 @@ export default function OpeningBalanceItems() {
                             <table>
                                 <thead className="tw-sticky tw-top-0">
                                     <tr className="tw-text-gray-700">
-                                        <th width="12%" className="text-center">
+                                        <th width="8%" className="text-center">
                                             No
                                         </th>
-                                        <th>Date</th>
+                                        <th width="17%">Date</th>
                                         <th>Item name</th>
-                                        <th>Qty</th>
+                                        <th width="8%">Qty</th>
                                         <th>Description</th>
-                                        <th className="text-center">
+                                        <th width="15%" className="text-center">
                                             <i className="fas fa-cog"></i>
                                         </th>
                                     </tr>

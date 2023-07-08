@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios, { Axios } from "axios";
 import Swal from "sweetalert2";
-import { debounce } from "lodash";
+import { debounce, difference } from "lodash";
 import Case from "../../components/Case";
 import { useNavigate } from "react-router-dom";
 import appConfig from "../../config/appConfig";
@@ -14,12 +14,14 @@ import SearchEntries from "../Layout/Components/SearchEntries";
 import ModalFooter from "../Layout/Components/ModalFooter";
 import ModalHeader from "../Layout/Components/ModalHeader";
 
-export default function Item() {
+export default function StockOpname() {
     const navigate = useNavigate();
 
     const [rows, setRows] = useState([]);
-    const [categories, setCategories] = useState([]);
-    const [racks, setRacks] = useState([]);
+    const [items, setItems] = useState([]);
+
+    const [selectedItems, setSelectedItems] = useState([]);
+
     const [isLoading, setIsLoading] = useState(true);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -34,15 +36,14 @@ export default function Item() {
     const MySwal = withReactContent(Swal);
 
     useEffect(() => {
-        document.title = "Item";
+        document.title = "Inventories - Stock Opname";
         axios
             .get(
-                `${appConfig.baseurlAPI}/item?page=${currentPage}&per_page=${showing}&search=${searchTerm}&showing=${showing}`
+                `${appConfig.baseurlAPI}/stock-opname?page=${currentPage}&per_page=${showing}&search=${searchTerm}&showing=${showing}`
             )
             .then((data) => {
-                setCategories(data.data.categories);
-                setRacks(data.data.racks);
                 setRows(data.data.data.data);
+                setItems(data.data.items);
                 setTotalPages(data.data.data.last_page);
                 setTotalRows(data.data.data.total);
                 setIsLoading(false);
@@ -60,34 +61,38 @@ export default function Item() {
     const [modalData, setModalData] = useState(null);
     const [isEditing, setIsEditing] = useState(null);
 
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 7);
+    const formattedDate = currentDate.toISOString().slice(0, 16);
+
     /**
      * Initial form, reset input fields, and validate the form
      */
 
     const [formData, setFormData] = useState({
-        image: null,
-        item_code: "",
-        item_name: "",
-        category_id: "",
-        rack_id: "",
-        description: "",
+        date: formattedDate,
+        item_id: "",
+        qty: "0",
+        book: "",
+        physical: "",
+        difference: "",
+        description: "-",
     });
 
     const initialFormData = {
-        image: null,
-        item_code: "",
-        item_name: "",
-        category_id: "",
-        rack_id: "",
-        description: "",
+        date: formattedDate,
+        item_id: "",
+        qty: "0",
+        book: "0",
+        physical: "0",
+        difference: "0",
+        description: "-",
     };
 
     const [formErrors, setFormErrors] = useState({
-        image: null,
-        item_code: "",
-        item_name: "",
-        category_id: "",
-        rack_id: "",
+        item_id: "",
+        book: "",
+        physical: "",
         description: "",
     });
 
@@ -95,28 +100,33 @@ export default function Item() {
         let errors = {};
         let formIsValid = true;
 
-        // Validate input item_code
-        if (!formData.item_code) {
+        // Validate input date
+        if (!formData.date) {
             formIsValid = false;
-            errors.item_code = "Item Code is required";
+            errors.date = "Date is required";
         }
 
-        // Validate input item_name
-        if (!formData.item_name) {
+        // Validate input item_id
+        if (!formData.item_id) {
             formIsValid = false;
-            errors.item_name = "Item Name is required";
+            errors.item_id = "Item name is required";
         }
 
-        // Validate input category_id
-        if (!formData.category_id) {
+        // Validate input book
+        if (!formData.book) {
             formIsValid = false;
-            errors.category_id = "Category is required";
+            errors.book = "Book is required";
+        } else if (!/^\d+(\.\d{1,2})?$/.test(formData.book)) {
+            formIsValid = false;
+            errors.book = "Book is invalid must be number";
         }
 
-        // Validate input rack_id
-        if (!formData.rack_id) {
+        if (!formData.physical) {
             formIsValid = false;
-            errors.rack_id = "Rack is required";
+            errors.physical = "Physical is required";
+        } else if (!/^\d+(\.\d{1,2})?$/.test(formData.physical)) {
+            formIsValid = false;
+            errors.physical = "Physical is invalid must be number";
         }
 
         // Validate input description
@@ -164,29 +174,29 @@ export default function Item() {
         setFormData(initialFormData);
     };
 
-    const handleEdit = (id) => {
-        const data = rows.find((row) => row.id === id);
-        console.log(data);
-        setModalData(data);
-        setFormData({
-            image: null,
-            item_code: data.item_code,
-            item_name: data.item_name,
-            category_id: data.category_id,
-            rack_id: data.rack_id,
-            description: data.description,
-            stock: data.stock,
-        });
-        setIsEditing(true);
-    };
-
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleFileChange = (event) => {
-        setFormData({ ...formData, image: event.target.files[0] });
+        if (name == "item_id") {
+            axios
+                .get(`${appConfig.baseurlAPI}/stock-opname/${value}/book`)
+                .then((response) => {
+                    setFormData({
+                        ...formData,
+                        book: response.data.value_book,
+                        difference:
+                            formData.physical - response.data.value_book,
+                        item_id: value,
+                    });
+                });
+        } else if (name == "physical") {
+            setFormData({
+                ...formData,
+                difference: value - formData.book,
+                physical: value,
+            });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleSubmit = (event) => {
@@ -195,9 +205,9 @@ export default function Item() {
         if (!isEditing) {
             if (validateForm()) {
                 axios
-                    .post(`${appConfig.baseurlAPI}/item`, formData, {
+                    .post(`${appConfig.baseurlAPI}/stock-opname`, formData, {
                         headers: {
-                            "Content-Type": "multipart/form-data",
+                            "Content-Type": "application/json",
                         },
                     })
                     .then((response) => {
@@ -220,7 +230,7 @@ export default function Item() {
                         console.error("Error:", error);
                         MySwal.fire({
                             title: "Oops...",
-                            html: error.response.data.message.image,
+                            html: "Something went wrong.",
                             icon: "error",
                             timer: 2000,
                         });
@@ -228,21 +238,13 @@ export default function Item() {
             }
         } else {
             if (validateForm()) {
-                const data = new FormData();
-                data.append("image", formData.image);
-                data.append("item_code", formData.item_code);
-                data.append("item_name", formData.item_name);
-                data.append("category_id", formData.category_id);
-                data.append("rack_id", formData.rack_id);
-                data.append("description", formData.description);
-                data.append("_method", "put");
                 axios
-                    .post(
-                        `${appConfig.baseurlAPI}/item/${modalData.id}`,
-                        data,
+                    .put(
+                        `${appConfig.baseurlAPI}/stock-opname/${modalData.id}`,
+                        formData,
                         {
                             headers: {
-                                "Content-Type": "multipart/form-data",
+                                "Content-Type": "application/json",
                             },
                         }
                     )
@@ -297,9 +299,8 @@ export default function Item() {
 
     const handleDelete = (id) => {
         axios
-            .delete(`${appConfig.baseurlAPI}/item/${id}`)
+            .delete(`${appConfig.baseurlAPI}/stock-opname/${id}`)
             .then((data) => {
-                console.log("Success:", data);
                 setRows(rows.filter((row) => row.id !== id));
                 setTotalRows(totalRows - 1);
                 MySwal.fire({
@@ -333,13 +334,13 @@ export default function Item() {
     return (
         <Case>
             <div className="section-header px-4 tw-rounded-none tw-shadow-md tw-shadow-gray-200 lg:tw-rounded-lg">
-                <h1 className="mb-1 tw-text-lg">Item</h1>
+                <h1 className="mb-1 tw-text-lg">Stock Opname</h1>
             </div>
 
             <div className="section-body">
                 <div className="card">
                     <div className="card-body px-0">
-                        <h3>Table Item</h3>
+                        <h3>Table Stock Opname</h3>
                         <SearchEntries
                             showing={showing}
                             handleShow={handleShow}
@@ -353,13 +354,13 @@ export default function Item() {
                                         <th width="8%" className="text-center">
                                             No
                                         </th>
-                                        <th width="8%">Image</th>
-                                        <th width="10%">Item Code</th>
-                                        <th width="15%">Item Name</th>
-                                        <th width="11%">Category</th>
-                                        <th>Rack</th>
-                                        <th width="8%">Stock</th>
-                                        <th className="text-center">
+                                        <th width="11%">Date</th>
+                                        <th width="20%">Item name</th>
+                                        <th width="8%">Book</th>
+                                        <th width="10%">Physical</th>
+                                        <th width="12%">Difference</th>
+                                        <th width="20%">Description</th>
+                                        <th width="8%" className="text-center">
                                             <i className="fas fa-cog"></i>
                                         </th>
                                     </tr>
@@ -371,44 +372,13 @@ export default function Item() {
                                                 <td className="text-center">
                                                     {index + 1}
                                                 </td>
-                                                <td>
-                                                    <a
-                                                        href={
-                                                            appConfig.baseURL +
-                                                            "/storage/images/" +
-                                                            row.image
-                                                        }
-                                                        target="_BLANK"
-                                                    >
-                                                        <img
-                                                            className="tw-aspect-square tw-w-3/6 tw-rounded-lg"
-                                                            src={
-                                                                appConfig.baseURL +
-                                                                "/storage/images/" +
-                                                                row.image
-                                                            }
-                                                        />
-                                                    </a>
-                                                </td>
-                                                <td>{row.item_code}</td>
+                                                <td>{row.date}</td>
                                                 <td>{row.item_name}</td>
-                                                <td>{row.category_name}</td>
-                                                <td>
-                                                    {row.rack_code} -{" "}
-                                                    {row.rack_name}
-                                                </td>
-                                                <td>{row.stock},00 </td>
+                                                <td>{row.book},00</td>
+                                                <td>{row.physical},00</td>
+                                                <td>{row.difference},00</td>
+                                                <td>{row.description}</td>
                                                 <td className="text-center">
-                                                    <button
-                                                        onClick={() =>
-                                                            handleEdit(row.id)
-                                                        }
-                                                        className="btn btn-primary mr-2"
-                                                        data-toggle="modal"
-                                                        data-target="#formDataModal"
-                                                    >
-                                                        <i className="fas fa-edit"></i>
-                                                    </button>
                                                     <button
                                                         onClick={() =>
                                                             handleConfirmationDelete(
@@ -458,119 +428,76 @@ export default function Item() {
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <ModalHeader isEditing={isEditing} />
-                        <form
-                            onSubmit={handleSubmit}
-                            encType="multipart/form-data"
-                        >
+                        <form onSubmit={handleSubmit}>
                             <div className="modal-body">
+                                <InputValidation
+                                    label="Date"
+                                    name="date"
+                                    type="datetime-local"
+                                    value={formData.date}
+                                    onChange={handleInputChange}
+                                    error={formErrors.date}
+                                />
                                 <div className="form-group">
-                                    <label htmlFor="image">Image</label>
-                                    <input
-                                        type="file"
-                                        name="image"
-                                        id="image"
-                                        className="form-control"
-                                        onChange={handleFileChange}
-                                    />
+                                    <label htmlFor="item_id">Item name</label>
+                                    <select
+                                        name="item_id"
+                                        id="item_id"
+                                        className={`form-control ${
+                                            formErrors.item_id
+                                                ? "is-invalid"
+                                                : ""
+                                        }`}
+                                        value={formData.item_id || ""}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="" disabled>
+                                            -- Select Option --
+                                        </option>
+                                        {items.map((item, index) => (
+                                            <option key={index} value={item.id}>
+                                                {item.item_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    {formErrors.item_id && (
+                                        <div className="invalid-feedback">
+                                            {formErrors.item_id}
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="row">
-                                    <div className="col-lg-6">
+                                    <div className="col-lg-4">
                                         <InputValidation
-                                            label="Item Code"
-                                            name="item_code"
-                                            type="text"
-                                            value={formData.item_code}
+                                            label="Book"
+                                            name="book"
+                                            type="number"
+                                            value={formData.book}
                                             onChange={handleInputChange}
-                                            error={formErrors.item_code}
+                                            error={formErrors.book}
                                         />
                                     </div>
-                                    <div className="col-lg-6">
+                                    <div className="col-lg-4">
                                         <InputValidation
-                                            label="Item Name"
-                                            name="item_name"
-                                            type="text"
-                                            value={formData.item_name}
+                                            label="Physical"
+                                            name="physical"
+                                            type="number"
+                                            value={formData.physical}
                                             onChange={handleInputChange}
-                                            error={formErrors.item_name}
+                                            error={formErrors.physical}
+                                        />
+                                    </div>
+                                    <div className="col-lg-4">
+                                        <InputValidation
+                                            label="Difference"
+                                            name="difference"
+                                            type="number"
+                                            value={formData.difference}
+                                            onChange={handleInputChange}
+                                            error={formErrors.difference}
                                         />
                                     </div>
                                 </div>
-                                <div className="row">
-                                    <div className="col-lg-6">
-                                        <div className="form-group">
-                                            <label htmlFor="category_id">
-                                                Category
-                                            </label>
-                                            <select
-                                                name="category_id"
-                                                id="category_id"
-                                                className={`form-control ${
-                                                    formErrors.category_id
-                                                        ? "is-invalid"
-                                                        : ""
-                                                }`}
-                                                value={
-                                                    formData.category_id || ""
-                                                }
-                                                onChange={handleInputChange}
-                                            >
-                                                <option value="">
-                                                    -- Select Option --
-                                                </option>
-                                                {categories.map((cat) => (
-                                                    <option
-                                                        key={cat.id}
-                                                        value={cat.id}
-                                                    >
-                                                        {cat.category_name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {formErrors.category_id && (
-                                                <div className="invalid-feedback">
-                                                    {formErrors.category_id}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-6">
-                                        <div className="form-group">
-                                            <label htmlFor="rack_id">
-                                                Rack
-                                            </label>
-                                            <select
-                                                name="rack_id"
-                                                id="rack_id"
-                                                className={`form-control ${
-                                                    formErrors.rack_id
-                                                        ? "is-invalid"
-                                                        : ""
-                                                }`}
-                                                value={formData.rack_id || ""}
-                                                onChange={handleInputChange}
-                                            >
-                                                <option value="">
-                                                    -- Select Option --
-                                                </option>
-                                                {racks.map((rack) => (
-                                                    <option
-                                                        key={rack.id}
-                                                        value={rack.id}
-                                                    >
-                                                        {rack.rack_code} -{" "}
-                                                        {rack.rack_name}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {formErrors.rack_id && (
-                                                <div className="invalid-feedback">
-                                                    {formErrors.rack_id}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <TextareaValidation
                                     label="Description"
                                     name="description"

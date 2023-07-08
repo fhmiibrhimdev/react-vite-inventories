@@ -90,7 +90,7 @@ class StockInController extends Controller
                 $this->alertStockMinus();
             } else {
                 Inventory::create([
-                    'date'          => $request->date,
+                    'date'          => date('Y-m-d H:i', strtotime($request->date)),
                     'item_id'       => $request->item_id,
                     'qty'           => $request->qty,
                     'description'   => $request->description,
@@ -168,7 +168,7 @@ class StockInController extends Controller
 
             $data = Inventory::findOrFail($id);
             $data->update([
-                'date'          => $request->date,
+                'date'          => date('Y-m-d H:i', strtotime($request->date)),
                 'item_id'       => $request->item_id,
                 'qty'           => $request->qty,
                 'description'   => $request->description,

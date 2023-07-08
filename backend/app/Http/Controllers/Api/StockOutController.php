@@ -56,7 +56,7 @@ class StockOutController extends Controller
         $total          = $last_qty - $new_qty;
         $total_stock    = $total_stock_now + $total;
         if ( $total_stock < 0 ) {
-            $this->alertStockMinus();
+            $this->alertStockMinus($total_stock_now);
         } else {
             Item::where('id', $item_id)
                 ->update(array(
@@ -65,7 +65,7 @@ class StockOutController extends Controller
 
             $data = Inventory::findOrFail($id);
             $data->update([
-                'date'          => $date,
+                'date'          => date('Y-m-d H:i', strtotime($date)),
                 'item_id'       => $item_id,
                 'qty'           => $new_qty,
                 'description'   => $description,
@@ -78,9 +78,9 @@ class StockOutController extends Controller
         }
     }
 
-    private function alertStockMinus()
+    private function alertStockMinus($stock_now)
     {
-        abort(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, 'Stock cannot be less than zero');
+        abort(JsonResponse::HTTP_INTERNAL_SERVER_ERROR, 'Stock cannot be less than zero, Stock now: ' . $stock_now);
     }
 
     public function store(Request $request)
@@ -96,10 +96,10 @@ class StockOutController extends Controller
             $reduce_stock = $last_stock_items - $request->qty;
 
             if ($reduce_stock < 0) {
-                $this->alertStockMinus();
+                $this->alertStockMinus($last_stock_items);
             } else {
                 Inventory::create([
-                    'date'          => $request->date,
+                    'date'          => date('Y-m-d H:i', strtotime($request->date)),
                     'item_id'       => $request->item_id,
                     'qty'           => $request->qty,
                     'description'   => $request->description,
