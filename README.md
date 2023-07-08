@@ -1,4 +1,4 @@
-![image](https://github.com/fhmiibrhimdev/react-vite-inventories/assets/129714988/5d262267-bf2c-43ea-be34-eb09822bc3b0)
+![image](https://github.com/fhmiibrhimdev/react-vite-inventories/assets/129714988/ff8743aa-7feb-4135-9122-f3407025664f)
 
 # Laravel React Vite Inventories
 
