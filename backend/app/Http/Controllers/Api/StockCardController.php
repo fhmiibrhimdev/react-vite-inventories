@@ -31,6 +31,7 @@ class StockCardController extends Controller
                         $query->orWhere('qty', 'LIKE', $searchTerm);
                     })
                     ->where('item_id', $request->item_id)
+                    ->whereBetween('date', [$request->start_date, $request->end_date])
                     ->orderBy('date', 'ASC')
                     ->paginate($perPage);
 

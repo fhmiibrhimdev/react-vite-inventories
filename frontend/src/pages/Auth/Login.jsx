@@ -97,9 +97,12 @@ export default function Login() {
     return (
         <div className="row">
             <div className="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4 tw-mt-10">
-                <div className="card">
+                <center>
+                    <img src="intek.png" width="50%" className="rounded" />
+                </center>
+                <div className="card tw-rounded-xl tw-shadow-lg tw-shadow-gray-300">
                     <div className="card-header">
-                        <h4>Login</h4>
+                        <h4>Sign In</h4>
                     </div>
                     <div className="card-body">
                         <form onSubmit={loginHandler}>
@@ -131,9 +134,7 @@ export default function Login() {
                     Don't have an account?{" "}
                     <Link to="/register">Create One</Link>
                 </div>
-                <div className="simple-footer">
-                    Copyright &copy; Stisla 2023
-                </div>
+                <div className="simple-footer">Copyright &copy; Minventory</div>
             </div>
         </div>
     );

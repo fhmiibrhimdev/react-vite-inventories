@@ -1,4 +1,5 @@
 import axios from "axios";
+import moment from "moment";
 import Swal from "sweetalert2";
 import Select from "react-select";
 import { debounce } from "lodash";
@@ -33,7 +34,7 @@ export default function StockCard() {
         document.title = "Inventories - Stock Card";
         axios
             .get(
-                `${appConfig.baseurlAPI}/stock-card?item_id=${formData.item_id}&page=${currentPage}&per_page=${showing}&search=${searchTerm}&showing=${showing}`
+                `${appConfig.baseurlAPI}/stock-card?item_id=${formData.item_id}&start_date=${formData.start_date}&end_date=${formData.end_date}&page=${currentPage}&per_page=${showing}&search=${searchTerm}&showing=${showing}`
             )
             .then((data) => {
                 // console.log(data.data.data.data);
@@ -53,16 +54,25 @@ export default function StockCard() {
             });
     }, [currentPage, showing, searchTermDebounced, refetch]);
 
+    const firstDayOfMonth = moment()
+        .startOf("month")
+        .format("YYYY-MM-DD HH:mm");
+    const endDayOfMonth = moment().endOf("month").format("YYYY-MM-DD HH:mm");
+
     /**
      * Initial form, reset input fields, and validate the form
      */
 
     const [formData, setFormData] = useState({
         item_id: "",
+        start_date: firstDayOfMonth,
+        end_date: endDayOfMonth,
     });
 
     const [formErrors, setFormErrors] = useState({
         item_id: "",
+        start_date: "",
+        end_date: "",
     });
 
     /**
@@ -104,8 +114,8 @@ export default function StockCard() {
 
     const handleInputChange = (event) => {
         const { name, value } = event.target;
-        console.log(name, value);
         setFormData({ ...formData, [name]: value });
+        setRefetch(Math.random());
     };
 
     if (isLoading) {
@@ -143,6 +153,24 @@ export default function StockCard() {
                                         </span>
                                     )}
                                 </div>
+                            </div>
+                            <div className="px-4">
+                                <InputValidation
+                                    label="Start Date"
+                                    name="start_date"
+                                    type="datetime-local"
+                                    value={formData.start_date}
+                                    onChange={handleInputChange}
+                                    error={formErrors.start_date}
+                                />
+                                <InputValidation
+                                    label="End Date"
+                                    name="end_date"
+                                    type="datetime-local"
+                                    value={formData.end_date}
+                                    onChange={handleInputChange}
+                                    error={formErrors.end_date}
+                                />
                             </div>
                         </div>
                     </div>
