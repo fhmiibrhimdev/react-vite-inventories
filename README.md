@@ -1,8 +1,8 @@
-<img width="100%" alt="image" src="https://user-images.githubusercontent.com/129714988/230786429-ae7d00b6-3375-452d-bc00-adbf780ad5f5.png">
+![image](https://github.com/fhmiibrhimdev/react-vite-inventories/assets/129714988/5d262267-bf2c-43ea-be34-eb09822bc3b0)
 
-# Laravel React Vite Stisla
+# Laravel React Vite Inventories
 
-This project is a web application built with Laravel, ReactJS with Vite, and Stisla Admin Template. The web application is designed to provide a user-friendly interface for managing data with the CRUD, searching, pagination, showing, single page application, and validation features.
+This project is a web application built with Laravel, ReactJS with Vite, and Stisla Admin Template. The web application is designed to provide a user-friendly interface, and used for inventory purposes in companies and businesses.
 
 ## Folder Structure
 
@@ -11,17 +11,13 @@ This project is a web application built with Laravel, ReactJS with Vite, and Sti
 
 ## Features
 
-- Laravel for backend RESTful API
-- ReactJS with Vite for frontend development
-- Stisla Admin Template for responsive and user-friendly interface
-- CRUD operations for managing data
-- Searching and pagination functionality
-- Single page application with React Router
-- Form validation with ReactJS validation rules
-- [NEW!] Authentication with JWT Token
-- [NEW!] Validation and sweetalert authentication
-- [NEW!] Multiple authentication role REST API with laratrust!
-- [NEW!] Page: 404, 403.
+- Dashboard
+- Category, Locations, Items
+- Opening Balance Items, Stock In, Stock Out, Stock Opname
+- Stock Card
+- Report
+- Setting Users (active/non-active)
+- Multirole users: admin, users
 
 ## Prerequisites
 
@@ -36,7 +32,7 @@ This project is a web application built with Laravel, ReactJS with Vite, and Sti
 1. Clone this repository to your local machine:
 
 ```
-git clone https://github.com/fhmiibrhimdev/laravel-react-vite-stisla.git
+git clone https://github.com/fhmiibrhimdev/react-vite-inventories.git
 ```
 
 2. Install the dependencies for the Laravel project:
@@ -91,7 +87,7 @@ cd ../backend
 php artisan serve
 ```
 
-10. Visit [Localhost](http://localhost:5173/products) in your web browser to access the web application.
+10. Visit [Localhost](http://localhost:5173/) in your web browser to access the web application.
 
 ## License
 
